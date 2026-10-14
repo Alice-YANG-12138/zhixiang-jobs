@@ -363,38 +363,39 @@ async function submitApply(e){
   if(!phone){ showMsg("请填写联系电话","err"); return; }
   if(!pos){ showMsg("请选择意向岗位","err"); return; }
   if(!resume){ showMsg("请上传简历文件","err"); return; }
-
-  if(!CB_APP || !cb_auth){
-    showMsg("页面缺少云开发SDK，请检查网络后重试。","err");
-    return;
-  }
+  if(!CB_APP || !cb_auth){ showMsg("页面缺少云开发SDK，请检查网络后重试。","err"); return; }
 
   btn.disabled = true; btn.textContent = "提交中…";
   try{
-    // 1) 匿名登录（需在控制台开启「匿名登录」）
+    // 1) 匿名登录（需控制台开启「匿名登录」，见《控制台配置》）
     if(!cb_auth.hasLoginState()){
       await cb_auth.anonymousAuthProvider().signIn();
     }
+    const ts = Date.now();
+    const safeName = name.replace(/[\\/:*?"<>|]/g,"_");
+    const ext = (resume.name.split(".").pop()||"bin");
+    const timeH = new Date().toISOString().replace(/[:T]/g,"-").slice(0,19);
 
-    // 2) 上传简历到云存储
-    const cloudPath = "resumes/" + Date.now() + "-" + name + "." + (resume.name.split(".").pop()||"bin");
-    const uploadRes = await CB_APP.uploadFile({ cloudPath: cloudPath, filePath: resume });
-    const resumeFileID = uploadRes.fileID;
+    // 2) 简历上传到云存储 resumes/<岗位>/<姓名>-<时间>.<ext>
+    const resumePath = "resumes/" + pos + "/" + safeName + "-" + timeH + "." + ext;
+    const up = await CB_APP.uploadFile({ cloudPath: resumePath, filePath: resume });
+    const resumeFileID = up.fileID;
 
-    // 3) 报名信息写入云数据库
-    await CB_APP.database().collection(DB_COLL).add({
+    // 3) 报名信息以 JSON 文件上传到云存储 records/<姓名>-<时间>.json
+    const rec = {
       pos, name, phone,
       school: document.getElementById("fSchool").value.trim(),
       intro:  document.getElementById("fIntro").value.trim(),
-      resumeName: resume.name,
-      resumeFileID: resumeFileID,
-      createdAt: CB_APP.database().serverDate()
-    });
+      resumeName: resume.name, resumeFileID, submitTime: timeH
+    };
+    const recordPath = "records/" + safeName + "-" + timeH + ".json";
+    const enc = new TextEncoder();
+    await CB_APP.uploadFile({ cloudPath: recordPath, fileContent: enc.encode(JSON.stringify(rec)) });
 
-    showMsg("投递成功！已上传简历并保存报名信息，招聘单位会尽快联系你。","ok");
+    showMsg("投递成功！已保存报名信息与简历到云端招聘系统。","ok");
     resetForm();
   }catch(err){
-    showMsg("投递失败：" + (err && err.message ? err.message : err) + "（请检查控制台权限配置后重试，或直接邮件发送简历至招聘邮箱）","err");
+    showMsg("投递失败：" + (err && err.message ? err.message : err) + "（请检查云存储/匿名登录权限后重试）","err");
   }
   btn.disabled = false; btn.textContent = "提交投递";
 }
