@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>职享茶话会 · 优质岗位投递专场</title>
+<!-- CloudBase 云开发 Web SDK（腾讯云官方CDN，国内访问稳定） -->
+<script src="https://static.cloudbase.net/cloudbase-js-sdk/latest/cloudbase.full.js"></script>
+<style>
+  :root{
+    --navy:#0f2a52;      /* 主色 深蓝 */
+    --navy2:#1a3f74;     /* 次级深蓝 */
+    --gold:#c8a564;      /* 点缀 金 */
+    --bg:#f4f6f9;
+    --text:#2b3440;
+    --muted:#6b7683;
+    --line:#e3e8ef;
+    --ok:#1d8a5e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Microsoft YaHei","PingFang SC","Helvetica Neue",Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.7}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- Banner ---------- */
+  .banner{
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 55%,#24508f 100%);
+    color:#fff;padding:54px 6% 92px;position:relative;overflow:hidden;
+  }
+  .banner::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;background:rgba(200,165,100,.10)}
+  .banner::before{content:"";position:absolute;right:60px;bottom:-160px;width:360px;height:360px;border-radius:50%;background:rgba(255,255,255,.04)}
+  .b-brand{font-size:15px;letter-spacing:3px;color:var(--gold);font-weight:600;margin-bottom:14px}
+  .b-title{font-size:34px;font-weight:700;letter-spacing:1px;line-height:1.3}
+  .b-sub{margin-top:16px;font-size:16px;opacity:.92;max-width:720px}
+  .b-org{margin-top:8px;font-size:12px;opacity:.6;letter-spacing:1px}
+
+  .stats{display:flex;gap:18px;flex-wrap:wrap;margin:-60px 6% 0;position:relative;z-index:2}
+  .stat{flex:1;min-width:150px;background:#fff;border-radius:10px;padding:20px 24px;box-shadow:0 6px 20px rgba(15,42,82,.08);text-align:center;border-top:4px solid var(--gold)}
+  .stat b{font-size:28px;color:var(--navy);display:block;line-height:1.1}
+  .stat span{font-size:13px;color:var(--muted)}
+
+  .wrap{max-width:1200px;margin:0 auto;padding:32px 6% 20px}
+  h2.section{font-size:22px;color:var(--navy);margin:24px 0 6px;position:relative;padding-left:14px}
+  h2.section::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:4px;border-radius:3px;background:var(--gold)}
+  .section-tip{color:var(--muted);font-size:13px;margin-bottom:18px}
+
+  .filters{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
+  .search{flex:1;min-width:220px;position:relative}
+  .search input{width:100%;padding:12px 16px 12px 42px;border:1px solid var(--line);border-radius:8px;font-size:14px;outline:none;transition:.2s}
+  .search input:focus{border-color:var(--navy2);box-shadow:0 0 0 3px rgba(26,63,116,.08)}
+  .search::before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:.6;font-size:14px}
+  .tag{background:#fff;border:1px solid var(--line);color:var(--muted);border-radius:20px;padding:9px 16px;font-size:14px;cursor:pointer;transition:.2s}
+  .tag:hover{border-color:var(--navy2);color:var(--navy2)}
+  .tag.active{background:var(--navy);border-color:var(--navy);color:#fff}
+  .none-tip{text-align:center;color:var(--muted);padding:60px 0;display:none}
+
+  .jobs{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+  .jcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px 22px 18px;transition:.2s;display:flex;flex-direction:column;position:relative;overflow:hidden}
+  .jcard:hover{box-shadow:0 10px 26px rgba(15,42,82,.12);transform:translateY(-3px);border-color:var(--navy2)}
+  .jcard::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--navy),var(--gold));opacity:0;transition:.2s}
+  .jcard:hover::before{opacity:1}
+  .j-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .type-badge{font-size:11px;padding:2px 10px;border-radius:11px;font-weight:600}
+  .type-全职{background:#eef3fb;color:var(--navy2)}
+  .type-校招{background:#faf2e0;color:#a67c1e}
+  .type-实习{background:#e9f7f0;color:var(--ok)}
+  .j-title{font-size:18px;font-weight:700;color:var(--navy);line-height:1.35;margin-bottom:5px}
+  .j-company{font-size:12.5px;color:var(--gold);font-weight:600;margin-bottom:10px}
+  .j-salary{font-size:15px;color:#c0392b;font-weight:700;margin-bottom:8px}
+  .j-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .j-meta span{font-size:11.5px;background:var(--bg);color:var(--navy2);padding:3px 9px;border-radius:6px}
+  .j-desc{font-size:13px;color:var(--muted);flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:14px}
+  .j-foot{display:flex;gap:10px}
+  .btn-detail,.btn-apply{flex:1;text-align:center;padding:10px 0;border-radius:7px;font-size:14px;cursor:pointer;border:1px solid;transition:.2s;font-family:inherit}
+  .btn-detail{background:#fff;color:var(--navy2);border-color:var(--line)}
+  .btn-detail:hover{border-color:var(--navy2)}
+  .btn-apply{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .btn-apply:hover{background:var(--navy2)}
+
+  .modal{position:fixed;inset:0;background:rgba(15,42,82,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .modal.open{display:flex}
+  .modal-box{background:#fff;border-radius:12px;max-width:700px;width:100%;max-height:88vh;overflow:auto;padding:28px 32px;position:relative}
+  .modal-close{position:absolute;right:18px;top:16px;background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;line-height:1}
+  .modal h3{font-size:22px;color:var(--navy);margin-bottom:2px;padding-right:30px}
+  .m-company{color:var(--gold);font-size:13.5px;font-weight:600;margin-bottom:12px}
+  .m-info{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .m-info span{font-size:12px;background:var(--bg);color:var(--navy2);padding:4px 10px;border-radius:6px}
+  .m-block{margin-bottom:16px}
+  .m-block h4{font-size:15px;color:var(--navy);margin-bottom:8px;padding-left:10px;border-left:3px solid var(--gold)}
+  .m-full{font-size:13.5px;color:var(--text);white-space:pre-line}
+  .m-apply{margin-top:20px;width:100%;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;font-family:inherit}
+  .m-apply:hover{background:var(--navy2)}
+
+  .apply{position:fixed;inset:0;background:rgba(15,42,82,.5);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}
+  .apply.open{display:flex}
+  .apply-box{background:#fff;border-radius:12px;max-width:560px;width:100%;max-height:92vh;overflow:auto;padding:28px 32px;position:relative}
+  .apply-box h3{font-size:20px;color:var(--navy);margin-bottom:16px}
+  .field{margin-bottom:15px}
+  .field label{display:block;font-size:13.5px;color:var(--navy2);margin-bottom:6px;font-weight:600}
+  .field label .req{color:#d05050}
+  .field input,.field select,.field textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:7px;font-size:14px;font-family:inherit;outline:none;background:#fff}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--navy2);box-shadow:0 0 0 3px rgba(26,63,116,.08)}
+  .field textarea{resize:vertical;min-height:70px}
+  .file-in{border:2px dashed var(--line);border-radius:8px;padding:18px;text-align:center;color:var(--muted);cursor:pointer;background:var(--bg)}
+  .file-in b{color:var(--navy2)}
+  .file-name{font-size:12px;color:var(--ok);margin-top:6px;display:none}
+  .apply-submit{width:100%;padding:13px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;font-family:inherit;margin-top:4px}
+  .apply-submit:hover{background:var(--navy2)}
+  .apply-submit:disabled{opacity:.6;cursor:not-allowed}
+  .msg{margin-top:12px;padding:12px;border-radius:8px;font-size:13.5px;display:none}
+  .msg.ok{display:block;background:#e9f7f0;color:var(--ok);border:1px solid #c2ead6}
+  .msg.err{display:block;background:#fdeeed;color:#c0392b;border:1px solid #f3c6c4}
+
+  footer{background:var(--navy);color:#fff;margin-top:40px;padding:30px 6%}
+  .foot-inner{max-width:1200px;margin:0 auto;font-size:13px;opacity:.85}
+  .foot-inner b{color:var(--gold);margin-right:6px}
+
+  @media(max-width:640px){
+    .b-title{font-size:25px}
+    .stats{margin-top:-50px}
+    .stat{min-width:130px}
+    .stat b{font-size:22px}
+  }
+</style>
+</head>
+<body>
+
+  <header class="banner">
+    <div class="b-brand">职享茶话会 · 企业直招专场</div>
+    <div class="b-title">优质岗位投递专场</div>
+    <div class="b-sub">精选名企优质岗位，覆盖销售、物流、技术、游戏、外贸、金融等多领域。扫码进入，选择心仪岗位，一键上传简历投递。</div>
+    <div class="b-org">本页面为校园招聘投递入口 · 支持移动端在线报名</div>
+  </header>
+
+  <section class="stats">
+    <div class="stat"><b>10</b><span>在招岗位</span></div>
+    <div class="stat"><b>多岗位</b><span>全职 / 校招 / 实习</span></div>
+    <div class="stat"><b>48+</b><span>计划招聘人数</span></div>
+    <div class="stat"><b>本科/专科</b><span>学历要求</span></div>
+  </section>
+
+  <main class="wrap">
+    <h2 class="section">在招岗位</h2>
+    <div class="section-tip">可按关键词搜索单位或岗位名；点击岗位查看完整职位详情，选择后填表并上传简历即可投递。</div>
+
+    <div class="filters">
+      <div class="search"><input id="kw" type="text" placeholder="搜索单位 / 岗位，如“圆通”“软件”“外贸”"></div>
+      <div class="tag active" data-type="all">全部</div>
+      <div class="tag" data-type="全职">全职</div>
+      <div class="tag" data-type="校招">校招</div>
+      <div class="tag" data-type="实习">实习</div>
+    </div>
+
+    <div class="jobs" id="jobsGrid"></div>
+    <div class="none-tip" id="noneTip">未找到匹配岗位，试试更换关键词或就业性质。</div>
+  </main>
+
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <h3 id="mTitle"></h3>
+      <div class="m-company" id="mCompany"></div>
+      <div class="m-info" id="mInfo"></div>
+      <div class="m-block">
+        <h4>职位详情</h4>
+        <div class="m-full" id="mFull"></div>
+      </div>
+      <button class="m-apply" onclick="openApply(currentJob.pos)">立即投递该岗位</button>
+    </div>
+  </div>
+
+  <div class="apply" id="apply">
+    <div class="apply-box">
+      <button class="modal-close" onclick="closeApply()">&times;</button>
+      <h3>在线投递</h3>
+      <form id="applyForm" onsubmit="return submitApply(event)">
+        <div class="field">
+          <label>意向岗位 <span class="req">*</span></label>
+          <select id="fPos" required></select>
+        </div>
+        <div class="field">
+          <label>姓名 <span class="req">*</span></label>
+          <input id="fName" type="text" required placeholder="请填写真实姓名">
+        </div>
+        <div class="field">
+          <label>联系电话 <span class="req">*</span></label>
+          <input id="fPhone" type="tel" required placeholder="11 位手机号码" pattern="1[3-9][0-9]{9}">
+        </div>
+        <div class="field">
+          <label>学校与专业</label>
+          <input id="fSchool" type="text" placeholder="如：XX大学 / 市场营销 大专">
+        </div>
+        <div class="field">
+          <label>意向说明</label>
+          <textarea id="fIntro" placeholder="简要介绍你的优势与求职意向（选填）"></textarea>
+        </div>
+        <div class="field">
+          <label>上传简历 <span class="req">*</span>（支持 PDF / Word，≤ 10MB）</label>
+          <label class="file-in" for="fResume">点击选择简历文件<br><b>或拖拽文件到此处</b></label>
+          <input id="fResume" type="file" accept=".pdf,.doc,.docx" style="display:none" required>
+          <div class="file-name" id="fileName"></div>
+        </div>
+        <button class="apply-submit" id="submitBtn" type="submit">提交投递</button>
+        <div class="msg" id="msg"></div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <b>投递说明：</b>提交后报名信息与简历进入云端招聘系统，可后台查看与导出。<br>
+      <b>咨询：</b>联系招聘组 &nbsp;·&nbsp; 本页面支持移动端在线报名
+    </div>
+  </footer>
+
+<script>
+/* ======== 投递后端：腾讯云 CloudBase 云开发（不限量、可后台查看/导出） ======== */
+const CB_ENV   = "yxy-d7gk1awo4c931dba1";  // 你的云开发环境ID
+const CB_REGION= "ap-shanghai";            // 环境地域
+const CB_APP   = cloudbase ? cloudbase.init({ env: CB_ENV, region: CB_REGION }) : null;
+const cb_auth  = CB_APP ? CB_APP.auth({ persistence: "local" }) : null;
+const DB_COLL  = "submissions";            // 数据库集合名（报名记录）
+
+/* ======== 岗位数据：来源《9.23职享茶话会-学生投递岗位.xlsx》 ======== */
+/* 字段：pos职位 / company单位 / type就业性质 / num人数 / edu学历 / salary薪资 / desc摘要 / full完整描述 */
+const JOBS = [
+{
+  pos:"大客户销售-企业解决方案团队", company:"富士胶片实业发展（上海）有限公司广州分公司", type:"全职", num:"若干", edu:"大学本科", salary:"10000-16000",
+  desc:"负责所覆盖区域办公产品解决方案在现有大客户（政府、金融、教育、国企、大型跨国公司等）的开发及推广，提升客户满意度、推动产品在客户中的印象，达成销售目标。专业不限，计算机及工程领域优先。",
+  full:"1.负责所覆盖区域办公产品解决方案在现有大客户（如：政府，金融，教育，国企，大型跨国公司等）的开发及推广。\n2.凭借专业办公产品销售服务，提升客户满意度及推动公司产品在客户中的印象。\n3.优化内部资源通过各个销售团队的合作，深度挖掘现有客户需求，推动解决方案在客户中的意识从而达成销售目标。\n4.确保直销的销售行为和流程符合公司的规章制度。\n5.负责所覆盖区域内客户货款的回笼。\n\n专业不限，计算机及工程领域优先考虑。"
+},
+{
+  pos:"新锐生管培生", company:"广东圆通速递有限公司", type:"全职", num:"10", edu:"大学本科", salary:"7000-8000",
+  desc:"战略级管培生项目，3个月可竞选组长、6个月可竞选主管，包吃包住，广州起薪7200元，五险一金，师带徒培养。面向2024年及以后毕业本科及以上，需持CET-6，接受夜班及一线轮岗。",
+  full:"岗位名称（需要驻外到华南：广州工作包吃住）\n新锐生管培生（营运 / 调度 / 设备 / 行政 / 人资 5 大条线）\n\n【岗位亮点】\n战略级管培生项目｜3 个月可竞选组长｜6 个月可竞选主管｜包吃包住｜广州起薪 7200｜五险一金｜师带徒培养\n\n【岗位职责】\n3-5 年定向培养为快递物流领域中高层管理人员，从基层历练成长；\n深耕对应条线一线业务，熟悉转运中心全流程，发现问题并输出优化方案；\n协助落实公司战略，推进部门经营计划，夯实专业能力与管理基础；\n参与业务流程优化、标准化落地，提升运营效率、服务质量与客户体验；\n按计划完成轮岗学习、周工作总结、月度绩效评估，满足项目培养要求。\n\n【任职资格】\n学历要求：2024 年及以后毕业，本科及以上；\n专业要求：理工类、管理学、自动化、机械工程等优先，不含艺术 / 文学 / 哲学类；\n能力要求：具备大学英语六级证书（CET-6），逻辑清晰、沟通表达良好、责任心强、抗压能力强、愿意从基层做起；\n其他要求：接受夜班、接受一线轮岗、接受全国 / 华南大区调动；\n优先录用：学生干部、奖学金获得者、退役军人、下乡实践经历、接受跨城市调动者。\n\n【工作内容】\n一线轮岗：2 个月晚班现场操作（20:00-07:00），覆盖卸车、分拣、扫描、供件、异常件处理、打包等岗位；\n职能轮岗：1 个月职能岗学习（人资 / 质控 / 调度 / 车队管理）；\n学习成长：专人师带徒、每周工作总结、月度绩效评级、阶段选拔考核；\n管理实践：3 个月可参与组长选拔，6 个月可参与主管选拔，优秀者提前晋升。\n\n【薪酬福利】\n薪资：广州地区试用期 7200 元 / 月起=综合薪资 7200 元 / 月，按城市等级定薪；其中学历补贴 1200 元 / 月（与绩效挂钩，A:1.5 倍 / B:1 倍 / C:0.5 倍 / D:0）；\n保障：入职即缴纳五险一金，包吃包住，2-4 人间宿舍；\n其他：路费报销最高 300 元、体检报销最高 100 元、试工补贴 130-160 元 / 天、法定节假日福利、生日关怀。"
+},
+{
+  pos:"调试工程师", company:"广州皖文电气设备有限公司", type:"全职", num:"5", edu:"大学本科", salary:"8000-12000",
+  desc:"负责自动化控制系统的编程与调试，参与工程项目自控方案制定与实施，协助解决自动化相关技术问题，编写并优化控制程序提升系统运行效率与稳定性。",
+  full:"1.负责自动化控制系统的编程、调试工作；\n2.参与工程项目中自控方案的制定与实施；\n3.协助解决生产过程中出现的自动化相关技术问题；\n4.编写和优化控制程序，提升系统运行效率与稳定性。"
+},
+{
+  pos:"运营管培生", company:"广州市红火餐饮管理有限公司", type:"校招", num:"10", edu:"大学专科", salary:"6000-8000",
+  desc:"协助店长管理门店运营与成本管控、人员团队管控，每月协助完成人事与财务基本计算。专业不限，要求具备服务意识、工作责任心，学习适应能力强。",
+  full:"岗位职责：\n1、有基础的服务意识，为顾客提供优质的服务；\n2、具备工作责任心，愿意学习进步；\n3、协助店长管理门店运营和成本管控以及人员团队管控；\n4、协助每月完成人事和财务方面的基本计算。\n\n岗位要求：\n1、专业不限，学习适应能力强，稳定性高；\n2、热爱生活，积极乐观。"
+},
+{
+  pos:"外贸业务员", company:"广东华侨欧胜企业有限公司", type:"校招", num:"5", edu:"大学专科", salary:"6000-8000",
+  desc:"开展外贸业务、拓展海外市场，开发维护国外客户，适应国外参展，制定销售计划，接待来访国内外客户。要求具备国际商务口语能力，面试含全英文情景模拟。",
+  full:"1、开展外贸业务，拓展海外市场，开发、维护国外客户，适应国外参展；\n2、制定本市场内销售计划，确保完成分配的销售目标；\n3、熟练掌握公司产品，了解公司与同行的差异等市场信息反馈，提交市场分析报告；\n4、公司新产品、品牌推广方案的设计及推广；\n5、进出口业务的联络和洽谈，接待来访国内外客户，跟客户进行沟通交流，建立良好的长期合作关系；\n6、完成上级主管交待的其他任务；\n7、具有国外大型超市日用品采购经验。\n\n口语要求：能通过电话或现场，与海外客户进行正常的商务谈判或售后问题处理。面试时会安排全英文情景模拟（例如：客户投诉货不对版，要求赔偿）。"
+},
+{
+  pos:"游戏原画师", company:"郑州名匠网络科技有限公司广州分公司", type:"校招", num:"3", edu:"大学专科", salary:"6000-8000",
+  desc:"配合产品与项目要求制定游戏美术风格，输出角色原画设计标准标杆规范，参与具体角色设计任务，审核提交的原画设计稿，积累和共享原画设计经验。",
+  full:"1、配合产品与项目要求制定游戏美术风格，能输出角色原画设计标准标杆规范；\n2、参与具体角色设计任务，审核提交的原画设计稿；\n3、积累和共享原画设计经验，能持续探索角色设计风格与方向。"
+},
+{
+  pos:"管培实习生（运营/电商客服/平面设计/文案策划/视频剪辑/商务销售方向）", company:"泰昊乐生物科技有限公司", type:"实习", num:"8", edu:"大学专科", salary:"2800-4000",
+  desc:"可全职实习、最少3-6个月，熟练Office。含平面设计、文案策划、短视频营销、电商运营、销售等方向，学习能力强、做事踏实认真。",
+  full:"岗位要求：可全职实习，最少实习 3-6 个月；熟练 Office，对应方向有基础优先，学习能力强，做事踏实认真。\n平面设计方向：参与产品海报、电商详情页、品牌宣传物料的设计与美化等；\n文案策划方向：负责公众号推文、小红书笔记的选题撰写与排版等；\n短视频营销方向：参与脚本策划、视频拍摄跟场及基础剪辑工作等；\n电商运营方向：协助店铺后台维护、产品上架、数据整理及活动报名等；\n销售方向：① 通过多渠道开发潜在客户，推广公司健康产品；② 协助报价、合同跟进及回款；③ 参与线下活动及市场调研；④ 抗压能力强，目标导向等。"
+},
+{
+  pos:"银行资产保全专岗", company:"鸿泰鼎石资产管理有限责任公司广州分公司", type:"全职", num:"10", edu:"大学专科", salary:"5000-12000",
+  desc:"根据银行业务操作规范，通过电话沟通等方式，合法合规地提醒欠款客户及时处理信用卡逾期账款，协商还款事宜；调查评估客户还款能力，协助办理分期、减免。",
+  full:"1、根据银行业务操作规范，通过电话沟通等方式，合法合规地提醒欠款客户及时处理信用卡逾期账款，协商还款事宜；\n2、调查、评估客户还款能力，协助金融机构为逾期欠款客户办理分期、减免等业务，减缓客户还款压力。"
+},
+{
+  pos:"储备干部", company:"广东南钵旺食品科技有限公司", type:"校招", num:"10", edu:"大学专科", salary:"5000-8000",
+  desc:"主要负责线下品牌推广，在加盟商门店推广产品并邀请试吃，巡店检查执行情况，维护加盟商关系。后续视能力往教培、督导或销售方向培养。",
+  full:"（一）岗位内容\n1.主要负责线下品牌推广工作，在加盟商店内，清水加盐煮猪肉汤，邀请客人试吃，并根据话术/专业知识，与客人分享公司产品的独特性。\n2.巡店，检查加盟商是否按公司要求执行销售工作，如肉品陈列、品牌门店整洁度、肉是否有掺假等。\n3.加盟商关系维护，关注加盟商销售数据，结合实际，制定推广方案并执行。\n4.领导交办的其他工作事项。\n\n（二）培养方向\n视个人能力及兴趣爱好，后续往教培、督导或销售方向培养。"
+},
+{
+  pos:"软件开发", company:"广州市亿源机电有限公司", type:"全职", num:"5", edu:"大学专科", salary:"5000-6000",
+  desc:"计算机相关专业，掌握C#、Java、Python、C++等至少一种语言，熟悉前端与数据库开发，了解串口网络通信。主要协助上位机、MES系统、可视化大屏及大数据开发，一对一带教晋升。",
+  full:"计算机相关本科及以上学历，掌握 C#、Java、Python、C++ 等至少一种编程语言；熟悉 HTML5、VUE、AJAX、JavaScript、JQuery、CSS3 等前端相关技术；熟悉 SQL Server、MySQL 等数据库开发；了解串口和网络通信的软件开发技术，了解 Modbus/OPC/HTTP 等协议；熟悉数字孪生或大数据分析技术优先。\n主要协助上位机、MES 系统的开发、可视化大屏项目的开发、各种应用系统的开发、大数据开发。\n晋升通道（一对一培训）：高级技术员 → 助理工程师 → 工程师 → 项目主管"
+}
+];
+
+/* ======== 渲染 ======== */
+let currentJob = null;
+const grid = document.getElementById("jobsGrid");
+const posSel = document.getElementById("fPos");
+
+function renderJobs(list){
+  grid.innerHTML = "";
+  list.forEach(job=>{
+    const card = document.createElement("article");
+    card.className = "jcard";
+    card.innerHTML = `
+      <div class="j-top"><span class="type-badge type-${job.type}">${job.type}</span></div>
+      <div class="j-title">${job.pos}</div>
+      <div class="j-company">${job.company}</div>
+      <div class="j-salary">${job.salary} 元/月</div>
+      <div class="j-meta">
+        <span>招聘 ${job.num} 人</span><span>${job.edu}</span>
+      </div>
+      <div class="j-desc">${job.desc}</div>
+      <div class="j-foot">
+        <button class="btn-detail" onclick="openDetail('${escapeStr(job.pos)}')">查看详情</button>
+        <button class="btn-apply" onclick="openApply('${escapeStr(job.pos)}')">投递</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+  document.getElementById("noneTip").style.display = list.length ? "none" : "block";
+}
+function escapeStr(s){ return s.replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function byPos(p){ return JOBS.find(x=>x.pos===p); }
+
+function filterJobs(){
+  const kw = document.getElementById("kw").value.trim().toLowerCase();
+  const type = document.querySelector(".tag.active").dataset.type;
+  let list = JOBS.filter(j => type==="all" || j.type===type);
+  if(kw) list = list.filter(j => (j.pos+j.company+j.edu+j.salary+j.desc).toLowerCase().includes(kw));
+  renderJobs(list);
+}
+document.getElementById("kw").addEventListener("input", filterJobs);
+document.querySelectorAll(".tag").forEach(t=>t.addEventListener("click",()=>{
+  document.querySelectorAll(".tag").forEach(x=>x.classList.remove("active"));
+  t.classList.add("active"); filterJobs();
+}));
+
+function openDetail(p){
+  const j = byPos(p); currentJob = j;
+  document.getElementById("mTitle").textContent = j.pos;
+  document.getElementById("mCompany").textContent = j.company;
+  document.getElementById("mInfo").innerHTML =
+    `<span>${j.type}</span><span>招聘 ${j.num} 人</span><span>${j.edu}</span><span>${j.salary} 元/月</span>`;
+  document.getElementById("mFull").textContent = j.full;
+  document.getElementById("modal").classList.add("open");
+}
+function closeModal(){ document.getElementById("modal").classList.remove("open"); }
+
+function fillPosSelect(p){
+  posSel.innerHTML = JOBS.map(j=>`<option value="${escapeStr(j.pos)}" ${j.pos===p?"selected":""}>${j.company} · ${j.pos}</option>`).join("");
+}
+function openApply(p){
+  closeModal();
+  fillPosSelect(p||JOBS[0].pos);
+  const m=document.getElementById("msg"); m.className="msg"; m.style.display="none";
+  document.getElementById("apply").classList.add("open");
+}
+function closeApply(){ document.getElementById("apply").classList.remove("open"); }
+
+const resumeInput = document.getElementById("fResume");
+resumeInput.addEventListener("change",()=>{
+  const fn = document.getElementById("fileName");
+  if(resumeInput.files[0]){ fn.textContent = "已选择：" + resumeInput.files[0].name + "（" + (resumeInput.files[0].size/1048576).toFixed(1) + "MB）"; fn.style.display="block"; }
+});
+const fileInLabel = document.querySelector(".file-in");
+["dragenter","dragover"].forEach(ev=>fileInLabel.addEventListener(ev,e=>{e.preventDefault();fileInLabel.style.borderColor="var(--navy2)";}));
+["dragleave","drop"].forEach(ev=>fileInLabel.addEventListener(ev,e=>{e.preventDefault();fileInLabel.style.borderColor="var(--line)";}));
+fileInLabel.addEventListener("drop",e=>{ if(e.dataTransfer.files[0]){ resumeInput.files=e.dataTransfer.files; resumeInput.dispatchEvent(new Event("change")); } });
+
+async function submitApply(e){
+  e.preventDefault();
+  const btn = document.getElementById("submitBtn");
+  const msg = document.getElementById("msg");
+  const name = document.getElementById("fName").value.trim();
+  const phone = document.getElementById("fPhone").value.trim();
+  const pos = document.getElementById("fPos").value;
+  const resume = resumeInput.files[0];
+
+  if(!name){ showMsg("请填写姓名","err"); return; }
+  if(!phone){ showMsg("请填写联系电话","err"); return; }
+  if(!pos){ showMsg("请选择意向岗位","err"); return; }
+  if(!resume){ showMsg("请上传简历文件","err"); return; }
+
+  if(!CB_APP || !cb_auth){
+    showMsg("页面缺少云开发SDK，请检查网络后重试。","err");
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = "提交中…";
+  try{
+    // 1) 匿名登录（需在控制台开启「匿名登录」）
+    if(!cb_auth.hasLoginState()){
+      await cb_auth.anonymousAuthProvider().signIn();
+    }
+
+    // 2) 上传简历到云存储
+    const cloudPath = "resumes/" + Date.now() + "-" + name + "." + (resume.name.split(".").pop()||"bin");
+    const uploadRes = await CB_APP.uploadFile({ cloudPath: cloudPath, filePath: resume });
+    const resumeFileID = uploadRes.fileID;
+
+    // 3) 报名信息写入云数据库
+    await CB_APP.database().collection(DB_COLL).add({
+      pos, name, phone,
+      school: document.getElementById("fSchool").value.trim(),
+      intro:  document.getElementById("fIntro").value.trim(),
+      resumeName: resume.name,
+      resumeFileID: resumeFileID,
+      createdAt: CB_APP.database().serverDate()
+    });
+
+    showMsg("投递成功！已上传简历并保存报名信息，招聘单位会尽快联系你。","ok");
+    resetForm();
+  }catch(err){
+    showMsg("投递失败：" + (err && err.message ? err.message : err) + "（请检查控制台权限配置后重试，或直接邮件发送简历至招聘邮箱）","err");
+  }
+  btn.disabled = false; btn.textContent = "提交投递";
+}
+function showMsg(t,type){ const m=document.getElementById("msg"); m.className="msg "+type; m.innerHTML=t; m.style.display="block"; }
+function resetForm(){ document.getElementById("applyForm").reset(); document.getElementById("fileName").style.display="none"; }
+
+document.getElementById("modal").addEventListener("click",e=>{ if(e.target.id==="modal") closeModal(); });
+document.getElementById("apply").addEventListener("click",e=>{ if(e.target.id==="apply") closeApply(); });
+
+fillPosSelect(); renderJobs(JOBS);
+</script>
+</body>
+</html>
